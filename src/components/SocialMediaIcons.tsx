@@ -36,7 +36,7 @@ const SocialMediaIcons = () => {
   ];
 
   return (
-    <div className="fixed top-6 right-6 z-40">
+    <div className="fixed top-4 right-6 z-40">
       <motion.div
         className="flex flex-col space-y-3"
         initial={{ opacity: 0, x: 50 }}
