@@ -12,8 +12,8 @@ import BlogPost from './pages/BlogPost';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import WhatsAppFloat from './components/WhatsAppFloat';
-import CampBuddyCursorOrb from './components/CampBuddyCursorOrb';
-import SocialMediaBar from './components/SocialMediaBar';
+import CampBuddyButton from './components/CampBuddyButton';
+import SocialMediaIcons from './components/SocialMediaIcons';
 import Footer from './components/Footer';
 
 function App() {
@@ -35,8 +35,8 @@ function App() {
           </Routes>
         </AnimatePresence>
         <WhatsAppFloat />
-        <CampBuddyCursorOrb />
-        <SocialMediaBar />
+        <CampBuddyButton />
+        <SocialMediaIcons />
         <Footer />
       </div>
     </Router>
