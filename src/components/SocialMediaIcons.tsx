@@ -32,13 +32,7 @@ const SocialMediaIcons = () => {
       color: 'from-sky-400 to-sky-500',
       hoverColor: 'hover:shadow-sky-500/25'
     },
-    {
-      name: 'YouTube',
-      icon: <Youtube className="h-5 w-5" />,
-      url: 'https://youtube.com/@hotelkalsubai',
-      color: 'from-red-500 to-red-600',
-      hoverColor: 'hover:shadow-red-500/25'
-    }
+   
   ];
 
   return (
