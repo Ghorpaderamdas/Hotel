@@ -21,7 +21,7 @@ const CampBuddyButton = () => {
   return (
     <>
       {/* Main Floating Button */}
-      <div className="fixed bottom-11 right-12 z-50">
+      <div className="fixed bottom-13 right-10 z-50">
         <motion.div
           className="relative"
           animate={{
