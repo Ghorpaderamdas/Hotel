@@ -16,6 +16,7 @@ import {
   FileText
 } from 'lucide-react';
 import BlogManager from '../../components/admin/BlogManager';
+import MenuManager from '../../components/admin/MenuManager';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -41,52 +42,57 @@ const AdminDashboard = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowProModal(false)}
         >
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            className="bg-white rounded-lg p-8 max-w-md w-full"
+            initial={{ scale: 0.8, opacity: 0, y: 50 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 50 }}
+            className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center">
-              <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Crown className="h-8 w-8 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Pro Version Required</h2>
-              <p className="text-gray-600 mb-6">
-                This feature is available in the Pro version of Hotel Management System.
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="bg-gradient-to-br from-amber-400 to-orange-500 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center shadow-lg"
+              >
+                <Crown className="h-10 w-10 text-white" />
+              </motion.div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-3">Pro Version Required</h2>
+              <p className="text-gray-600 mb-8">
+                Unlock advanced features with our Pro version of Hotel Management System.
               </p>
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center justify-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                  Advanced Room Booking Management
-                </div>
-                <div className="flex items-center justify-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                  Payment Gateway Integration
-                </div>
-                <div className="flex items-center justify-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                  Multi-language Support
-                </div>
-                <div className="flex items-center justify-center text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                  Advanced Analytics & Reports
-                </div>
+              <div className="space-y-4 mb-8">
+                {[
+                  'Advanced Room Booking Management',
+                  'Payment Gateway Integration', 
+                  'Multi-language Support',
+                  'Advanced Analytics & Reports'
+                ].map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center justify-center text-sm text-gray-600"
+                  >
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    {feature}
+                  </motion.div>
+                ))}
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowProModal(false)}
-                  className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
+                  className="flex-1 bg-gray-200 text-gray-800 py-3 px-4 rounded-xl hover:bg-gray-300 transition-colors font-semibold"
                 >
                   Maybe Later
                 </button>
                 <button
                   disabled
-                  className="flex-1 bg-gray-400 text-white py-2 px-4 rounded-lg cursor-not-allowed"
+                  className="flex-1 bg-gray-400 text-white py-3 px-4 rounded-xl cursor-not-allowed font-semibold"
                 >
                   Upgrade Now
                 </button>
@@ -94,9 +100,9 @@ const AdminDashboard = () => {
             </div>
             <button
               onClick={() => setShowProModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6" />
             </button>
           </motion.div>
         </motion.div>
@@ -118,99 +124,104 @@ const AdminDashboard = () => {
     switch (activeTab) {
       case 'overview':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Total Bookings</p>
-                    <p className="text-2xl font-bold text-gray-800">127</p>
+              {[
+                { title: 'Total Bookings', value: '127', icon: Bed, color: 'from-blue-500 to-blue-600' },
+                { title: 'Menu Items', value: '45', icon: Utensils, color: 'from-green-500 to-green-600' },
+                { title: 'Gallery Images', value: '89', icon: Camera, color: 'from-purple-500 to-purple-600' },
+                { title: 'Blog Posts', value: '12', icon: FileText, color: 'from-amber-500 to-amber-600' }
+              ].map((stat, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
+                      <p className="text-3xl font-bold text-gray-800">{stat.value}</p>
+                    </div>
+                    <motion.div
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.6 }}
+                      className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg`}
+                    >
+                      <stat.icon className="h-7 w-7 text-white" />
+                    </motion.div>
                   </div>
-                  <Bed className="h-8 w-8 text-amber-600" />
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Menu Items</p>
-                    <p className="text-2xl font-bold text-gray-800">45</p>
-                  </div>
-                  <Utensils className="h-8 w-8 text-green-600" />
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Gallery Images</p>
-                    <p className="text-2xl font-bold text-gray-800">89</p>
-                  </div>
-                  <Camera className="h-8 w-8 text-blue-600" />
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Blog Posts</p>
-                    <p className="text-2xl font-bold text-gray-800">12</p>
-                  </div>
-                  <FileText className="h-8 w-8 text-purple-600" />
-                </div>
-              </div>
+                </motion.div>
+              ))}
             </div>
+
+            {/* Quick Actions */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border border-amber-200"
+            >
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { title: 'Add Menu Item', desc: 'Add new dishes to your menu', action: () => setActiveTab('menu') },
+                  { title: 'Upload Photos', desc: 'Add new images to gallery', action: () => setActiveTab('gallery') },
+                  { title: 'Write Blog Post', desc: 'Create new blog content', action: () => setActiveTab('blog') }
+                ].map((action, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={action.action}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-all text-left border border-gray-200"
+                  >
+                    <h4 className="font-semibold text-gray-800 mb-1">{action.title}</h4>
+                    <p className="text-sm text-gray-600">{action.desc}</p>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
           </div>
         );
       
       case 'menu':
-        return (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Menu Management</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <h3 className="font-semibold">Paneer Butter Masala</h3>
-                  <p className="text-sm text-gray-600">Vegetarian • ₹180</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded text-sm">Edit</button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded text-sm">Delete</button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <h3 className="font-semibold">Chicken Biryani</h3>
-                  <p className="text-sm text-gray-600">Non-Vegetarian • ₹220</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded text-sm">Edit</button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded text-sm">Delete</button>
-                </div>
-              </div>
-              <button className="w-full bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors">
-                Add New Menu Item
-              </button>
-            </div>
-          </div>
-        );
+        return <MenuManager />;
       
       case 'gallery':
         return (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Gallery Management</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Gallery Management</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="relative group">
-                  <div className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
-                    <Camera className="h-8 w-8 text-gray-400" />
-                  </div>
-                  <button className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="group relative aspect-square bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl flex items-center justify-center overflow-hidden"
+                >
+                  <Camera className="h-8 w-8 text-gray-400" />
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
                     <X className="h-4 w-4" />
-                  </button>
-                </div>
+                  </motion.button>
+                </motion.div>
               ))}
             </div>
-            <button className="w-full bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg"
+            >
               Upload New Images
-            </button>
+            </motion.button>
           </div>
         );
 
@@ -219,17 +230,29 @@ const AdminDashboard = () => {
       
       default:
         return (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center">
-            <Lock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Feature Locked</h2>
-            <p className="text-gray-600 mb-4">This feature is available in the Pro version.</p>
-            <button
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-lg p-12 text-center"
+          >
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-20 h-20 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center mx-auto mb-6"
+            >
+              <Lock className="h-10 w-10 text-gray-600" />
+            </motion.div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">Feature Locked</h2>
+            <p className="text-gray-600 mb-6">This feature is available in the Pro version.</p>
+            <motion.button
               onClick={() => setShowProModal(true)}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-2 rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg"
             >
               Learn More
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         );
     }
   };
@@ -239,33 +262,46 @@ const AdminDashboard = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-20 pb-16 bg-gray-100"
+      className="min-h-screen pt-20 pb-16 bg-gradient-to-br from-gray-50 to-gray-100"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <motion.div
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200"
+        >
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-              <p className="text-gray-600">Hotel Kalsubai Gate Point</p>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                Admin Dashboard
+              </h1>
+              <p className="text-gray-600 mt-1">Hotel Kalsubai Gate Point</p>
             </div>
-            <button
+            <motion.button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all flex items-center space-x-2 shadow-lg"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-5 w-5" />
               <span>Logout</span>
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-4">
+          <motion.div
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="lg:col-span-1"
+          >
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
               <nav className="space-y-2">
-                {menuItems.map((item) => (
-                  <button
+                {menuItems.map((item, index) => (
+                  <motion.button
                     key={item.id}
                     onClick={() => {
                       if (item.locked) {
@@ -274,31 +310,38 @@ const AdminDashboard = () => {
                         setActiveTab(item.id);
                       }
                     }}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02, x: 5 }}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                       activeTab === item.id
-                        ? 'bg-amber-100 text-amber-700'
+                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
                         : 'text-gray-600 hover:bg-gray-100'
                     } ${item.locked ? 'opacity-75' : ''}`}
                   >
-                    {item.icon}
-                    <span className="flex-1 text-left">{item.name}</span>
+                    <span className={activeTab === item.id ? 'text-white' : ''}>{item.icon}</span>
+                    <span className="flex-1 text-left font-medium">{item.name}</span>
                     {item.locked && <Lock className="h-4 w-4 text-gray-400" />}
-                  </button>
+                  </motion.button>
                 ))}
               </nav>
             </div>
-          </div>
+          </motion.div>
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {renderContent()}
-            </motion.div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {renderContent()}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>

@@ -1,92 +1,102 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Tent, 
+  Shirt, 
   Bath, 
-  Flame, 
-  Music, 
-  Wifi, 
-  Car, 
-  MapPin, 
+  Gamepad2, 
+  Music,
+  Wifi,
+  Car,
   Coffee,
+  Mountain,
   Shield,
   Clock,
   Users,
-  Mountain
+  MapPin
 } from 'lucide-react';
+import FacilityCard from '../components/FacilityCard';
+import AnimatedSectionWrapper from '../components/AnimatedSectionWrapper';
 
 const Facilities = () => {
-  const facilities = [
+  const mainFacilities = [
     {
-      icon: <Tent className="h-12 w-12" />,
-      title: "Camping Facility",
-      description: "Enjoy outdoor camping with proper tents and camping equipment provided",
-      features: ["Weather-resistant tents", "Camping mattresses", "Group camping areas", "Guided camping tours"]
+      icon: Shirt,
+      title: "Changing Room",
+      description: "Private and clean changing rooms with lockers for your convenience and security",
+      features: ["Private cubicles", "Secure lockers", "Clean & sanitized", "24/7 access"],
+      gradient: "from-blue-500 to-cyan-500"
     },
     {
-      icon: <Bath className="h-12 w-12" />,
-      title: "Clean Washrooms",
-      description: "Modern, clean washroom facilities with hot water available 24/7",
-      features: ["Hot water supply", "Western & Indian toilets", "Clean & sanitized", "Separate male/female"]
+      icon: Bath,
+      title: "Clean Washroom",
+      description: "Modern, hygienic washroom facilities with hot water available round the clock",
+      features: ["Hot water 24/7", "Western & Indian toilets", "Regular cleaning", "Eco-friendly products"],
+      gradient: "from-teal-500 to-emerald-500"
     },
     {
-      icon: <Flame className="h-12 w-12" />,
-      title: "Bonfire Setup",
-      description: "Cozy bonfire arrangements for evening entertainment and warmth",
-      features: ["Evening bonfire", "Seating arrangement", "Music & stories", "Marshmallow roasting"]
+      icon: Gamepad2,
+      title: "Indoor Games",
+      description: "Various indoor gaming activities to keep you entertained during your stay",
+      features: ["Board games", "Card games", "Chess & Carrom", "Group activities"],
+      gradient: "from-purple-500 to-indigo-500"
     },
     {
-      icon: <Music className="h-12 w-12" />,
-      title: "Entertainment",
-      description: "Various entertainment options including music, games, and cultural programs",
-      features: ["Live music", "Indoor games", "Cultural events", "Group activities"]
-    },
-    {
-      icon: <Wifi className="h-12 w-12" />,
-      title: "Free WiFi",
-      description: "Complimentary high-speed internet access throughout the property",
-      features: ["High-speed internet", "24/7 connectivity", "Multiple access points", "No data limits"]
-    },
-    {
-      icon: <Car className="h-12 w-12" />,
-      title: "Parking",
-      description: "Secure parking facility for cars, bikes, and other vehicles",
-      features: ["Secure parking", "24/7 security", "Car & bike parking", "CCTV monitoring"]
-    },
-    {
-      icon: <Coffee className="h-12 w-12" />,
-      title: "Restaurant",
-      description: "In-house restaurant serving delicious local and Indian cuisine",
-      features: ["Multi-cuisine menu", "Fresh ingredients", "Vegetarian options", "Room service available"]
-    },
-    {
-      icon: <Mountain className="h-12 w-12" />,
-      title: "Trekking Guide",
-      description: "Professional trekking guides for Kalsubai Peak and nearby trails",
-      features: ["Experienced guides", "Safety equipment", "Route planning", "Group trekking"]
+      icon: Music,
+      title: "Bonfire & Music",
+      description: "Evening bonfire with music speakers for the perfect mountain night experience",
+      features: ["Evening bonfire", "Sound system", "Live music", "Storytelling sessions"],
+      gradient: "from-orange-500 to-red-500"
     }
   ];
 
   const additionalServices = [
     {
-      icon: <Shield className="h-8 w-8" />,
+      icon: Shield,
       title: "24/7 Security",
-      description: "Round-the-clock security for your safety and peace of mind"
+      description: "Round-the-clock security for your safety and peace of mind",
+      gradient: "from-gray-600 to-gray-800"
     },
     {
-      icon: <Clock className="h-8 w-8" />,
+      icon: Clock,
       title: "24/7 Reception",
-      description: "Our reception desk is always available to assist you"
+      description: "Our reception desk is always available to assist you",
+      gradient: "from-blue-600 to-indigo-600"
     },
     {
-      icon: <Users className="h-8 w-8" />,
+      icon: Users,
       title: "Group Bookings",
-      description: "Special arrangements and discounts for group bookings"
+      description: "Special arrangements and discounts for group bookings",
+      gradient: "from-green-600 to-emerald-600"
     },
     {
-      icon: <MapPin className="h-8 w-8" />,
+      icon: MapPin,
       title: "Local Tours",
-      description: "Guided tours to nearby attractions and scenic spots"
+      description: "Guided tours to nearby attractions and scenic spots",
+      gradient: "from-purple-600 to-pink-600"
+    },
+    {
+      icon: Wifi,
+      title: "Free WiFi",
+      description: "High-speed internet access throughout the property",
+      gradient: "from-cyan-600 to-blue-600"
+    },
+    {
+      icon: Car,
+      title: "Secure Parking",
+      description: "Safe parking facility for cars, bikes, and other vehicles",
+      gradient: "from-amber-600 to-orange-600"
+    },
+    {
+      icon: Coffee,
+      title: "Restaurant",
+      description: "In-house restaurant serving delicious local cuisine",
+      gradient: "from-red-600 to-rose-600"
+    },
+    {
+      icon: Mountain,
+      title: "Trekking Guide",
+      description: "Professional guides for Kalsubai Peak adventures",
+      gradient: "from-emerald-600 to-teal-600"
     }
   ];
 
@@ -95,114 +105,224 @@ const Facilities = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-20 pb-16 bg-amber-50"
+      className="min-h-screen pt-20 pb-16 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Our Facilities
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover all the amenities and services we offer to make your stay 
-            comfortable and memorable at Hotel Kalsubai Gate Point.
-          </p>
-        </motion.div>
+      {/* Magical Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating Orbs */}
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-4 h-4 bg-white/10 rounded-full blur-sm"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -100, 0],
+              x: [0, Math.random() * 50 - 25, 0],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 6 + Math.random() * 4,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
 
-        {/* Main Facilities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
-          {facilities.map((facility, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
-            >
-              <div className="text-amber-600 mb-4 flex justify-center">
-                {facility.icon}
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">
-                {facility.title}
-              </h3>
-              <p className="text-gray-600 text-sm mb-4 text-center">
-                {facility.description}
-              </p>
-              <ul className="space-y-2">
-                {facility.features.map((feature, idx) => (
-                  <li key={idx} className="text-sm text-gray-600 flex items-center">
-                    <div className="w-2 h-2 bg-amber-600 rounded-full mr-2"></div>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </div>
+        {/* Gradient Overlays */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10"
+          animate={{
+            opacity: [0.1, 0.3, 0.1],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Header */}
+        <AnimatedSectionWrapper direction="down" className="text-center mb-16">
+          <motion.h1
+            className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent"
+            animate={{
+              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          >
+            Magical Facilities
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed"
+          >
+            Discover all the enchanting amenities and services we offer to make your stay 
+            at Hotel Kalsubai Gate Point truly magical and unforgettable.
+          </motion.p>
+        </AnimatedSectionWrapper>
+
+        {/* Main Facilities */}
+        <AnimatedSectionWrapper direction="up" delay={0.2} className="mb-20">
+          <motion.h2
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className="text-3xl font-bold text-white mb-12 text-center"
+          >
+            Core Facilities
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {mainFacilities.map((facility, index) => (
+              <FacilityCard
+                key={index}
+                icon={facility.icon}
+                title={facility.title}
+                description={facility.description}
+                features={facility.features}
+                index={index}
+                gradient={facility.gradient}
+              />
+            ))}
+          </div>
+        </AnimatedSectionWrapper>
 
         {/* Additional Services */}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="bg-white rounded-lg shadow-lg p-8 mb-16"
-        >
-          <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
+        <AnimatedSectionWrapper direction="up" delay={0.4} className="mb-20">
+          <motion.h2
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className="text-3xl font-bold text-white mb-12 text-center"
+          >
             Additional Services
-          </h2>
+          </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {additionalServices.map((service, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 50, rotateX: -15 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="text-center p-4 bg-amber-50 rounded-lg"
+                whileHover={{ 
+                  y: -10,
+                  scale: 1.05,
+                  rotateY: 5,
+                }}
+                className="group bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 hover:border-white/40 transition-all duration-500 text-center"
               >
-                <div className="text-amber-600 mb-3 flex justify-center">
-                  {service.icon}
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-2">{service.title}</h3>
-                <p className="text-sm text-gray-600">{service.description}</p>
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.8 }}
+                  className={`w-16 h-16 bg-gradient-to-br ${service.gradient} rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-2xl transition-shadow duration-500`}
+                >
+                  <service.icon className="h-8 w-8 text-white" />
+                </motion.div>
+                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 transition-all duration-300">
+                  {service.title}
+                </h3>
+                <p className="text-white/80 text-sm">{service.description}</p>
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        </AnimatedSectionWrapper>
 
-        {/* Special Features */}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg p-8 text-center"
-        >
-          <h2 className="text-3xl font-bold mb-6">Why Choose Us?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Prime Location</h3>
-              <p className="text-amber-100">
-                Located at the base of Kalsubai Peak, Maharashtra's highest summit
-              </p>
+        {/* Why Choose Us Section */}
+        <AnimatedSectionWrapper direction="up" delay={0.6}>
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="bg-gradient-to-r from-amber-600/20 via-orange-600/20 to-red-600/20 backdrop-blur-xl rounded-3xl p-12 text-center border border-white/20 relative overflow-hidden"
+          >
+            {/* Animated Background */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10"
+              animate={{
+                x: ['-100%', '100%'],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+
+            <div className="relative z-10">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-4xl font-bold text-white mb-8"
+              >
+                Why Choose Our Magical Experience?
+              </motion.h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <motion.div
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-center"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4"
+                  >
+                    <MapPin className="h-10 w-10 text-white" />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Prime Location</h3>
+                  <p className="text-white/80">
+                    Located at the base of Kalsubai Peak, Maharashtra's highest summit
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-center"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"
+                  >
+                    <Users className="h-10 w-10 text-white" />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Authentic Experience</h3>
+                  <p className="text-white/80">
+                    Experience genuine Maharashtrian hospitality and local culture
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="text-center"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4"
+                  >
+                    <Mountain className="h-10 w-10 text-white" />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Adventure Ready</h3>
+                  <p className="text-white/80">
+                    Perfect base for trekking, camping, and exploring the Sahyadri mountains
+                  </p>
+                </motion.div>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Authentic Experience</h3>
-              <p className="text-amber-100">
-                Experience genuine Maharashtrian hospitality and local culture
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Adventure Ready</h3>
-              <p className="text-amber-100">
-                Perfect base for trekking, camping, and exploring the Sahyadri mountains
-              </p>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </AnimatedSectionWrapper>
       </div>
     </motion.div>
   );
