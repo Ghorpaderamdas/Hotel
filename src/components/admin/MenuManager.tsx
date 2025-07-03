@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, 
@@ -26,7 +26,7 @@ const MenuManager = () => {
       id: 1,
       name: 'Paneer Butter Masala', 
       price: 180, 
-      category: 'veg',
+      category: 'veg' as const,
       description: 'Rich and creamy paneer curry with aromatic spices',
       imageUrl: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'
     },
@@ -34,7 +34,7 @@ const MenuManager = () => {
       id: 2,
       name: 'Chicken Biryani', 
       price: 220, 
-      category: 'nonveg',
+      category: 'nonveg' as const,
       description: 'Aromatic basmati rice with tender chicken pieces',
       imageUrl: 'https://images.pexels.com/photos/1449773/pexels-photo-1449773.jpeg'
     },
@@ -51,6 +51,14 @@ const MenuManager = () => {
     description: '',
     imageUrl: ''
   });
+
+  // Fix: Use useCallback to prevent modal from closing on input change
+  const handleInputChange = useCallback((field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +78,7 @@ const MenuManager = () => {
     resetForm();
   };
 
-  const handleEdit = (item: MenuItem) => {
+  const handleEdit = useCallback((item: MenuItem) => {
     setEditingItem(item);
     setFormData({
       name: item.name,
@@ -80,7 +88,7 @@ const MenuManager = () => {
       imageUrl: item.imageUrl || ''
     });
     setShowModal(true);
-  };
+  }, []);
 
   const handleDelete = (id: number) => {
     if (window.confirm('Are you sure you want to delete this menu item?')) {
@@ -88,7 +96,7 @@ const MenuManager = () => {
     }
   };
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       name: '',
       price: 0,
@@ -99,9 +107,10 @@ const MenuManager = () => {
     setSelectedImage(null);
     setEditingItem(null);
     setShowModal(false);
-  };
+  }, []);
 
-  const MenuModal = () => (
+  // Fix: Separate modal component to prevent re-rendering issues
+  const MenuModal = React.memo(() => (
     <AnimatePresence>
       {showModal && (
         <motion.div
@@ -109,20 +118,26 @@ const MenuManager = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={resetForm}
+          onClick={(e) => {
+            // Only close if clicking the backdrop, not the modal content
+            if (e.target === e.currentTarget) {
+              resetForm();
+            }
+          }}
         >
           <motion.div
             initial={{ scale: 0.8, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
             className="bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} // Prevent event bubbling
           >
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-800">
                 {editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}
               </h2>
               <button
+                type="button"
                 onClick={resetForm}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
@@ -139,7 +154,7 @@ const MenuManager = () => {
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                     placeholder="Enter item name"
@@ -153,7 +168,7 @@ const MenuManager = () => {
                   <input
                     type="number"
                     value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                    onChange={(e) => handleInputChange('price', Number(e.target.value))}
                     required
                     min="0"
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
@@ -168,7 +183,7 @@ const MenuManager = () => {
                 </label>
                 <select
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value as 'veg' | 'nonveg' | 'extras' })}
+                  onChange={(e) => handleInputChange('category', e.target.value as 'veg' | 'nonveg' | 'extras')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                 >
                   <option value="veg">Vegetarian</option>
@@ -183,7 +198,7 @@ const MenuManager = () => {
                 </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
                   required
                   rows={3}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none"
@@ -224,7 +239,7 @@ const MenuManager = () => {
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  ));
 
   return (
     <div className="space-y-6">

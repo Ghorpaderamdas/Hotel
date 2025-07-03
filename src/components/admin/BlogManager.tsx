@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, 
@@ -43,6 +43,14 @@ const BlogManager = () => {
     }
   };
 
+  // Fix: Use useCallback to prevent modal from closing on input change
+  const handleInputChange = useCallback((field: keyof CreateBlogPost, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -71,7 +79,7 @@ const BlogManager = () => {
     }
   };
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       title: '',
       content: '',
@@ -81,9 +89,9 @@ const BlogManager = () => {
     });
     setShowCreateModal(false);
     setEditingBlog(null);
-  };
+  }, []);
 
-  const startEdit = (blog: BlogPost) => {
+  const startEdit = useCallback((blog: BlogPost) => {
     setEditingBlog(blog);
     setFormData({
       title: blog.title,
@@ -93,7 +101,7 @@ const BlogManager = () => {
       excerpt: blog.excerpt
     });
     setShowCreateModal(true);
-  };
+  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -103,7 +111,8 @@ const BlogManager = () => {
     });
   };
 
-  const BlogModal = () => (
+  // Fix: Separate modal component to prevent re-rendering issues
+  const BlogModal = React.memo(() => (
     <AnimatePresence>
       {showCreateModal && (
         <motion.div
@@ -111,20 +120,26 @@ const BlogManager = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-          onClick={resetForm}
+          onClick={(e) => {
+            // Only close if clicking the backdrop, not the modal content
+            if (e.target === e.currentTarget) {
+              resetForm();
+            }
+          }}
         >
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} // Prevent event bubbling
           >
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-800">
                 {editingBlog ? 'Edit Blog Post' : 'Create New Blog Post'}
               </h2>
               <button
+                type="button"
                 onClick={resetForm}
                 className="text-gray-400 hover:text-gray-600"
               >
@@ -141,7 +156,7 @@ const BlogManager = () => {
                   <input
                     type="text"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                     placeholder="Enter blog title"
@@ -155,7 +170,7 @@ const BlogManager = () => {
                   <input
                     type="text"
                     value={formData.author}
-                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                    onChange={(e) => handleInputChange('author', e.target.value)}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                     placeholder="Author name"
@@ -170,7 +185,7 @@ const BlogManager = () => {
                 <input
                   type="url"
                   value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                  onChange={(e) => handleInputChange('imageUrl', e.target.value)}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   placeholder="https://example.com/image.jpg"
@@ -183,7 +198,7 @@ const BlogManager = () => {
                 </label>
                 <textarea
                   value={formData.excerpt}
-                  onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                  onChange={(e) => handleInputChange('excerpt', e.target.value)}
                   required
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -197,7 +212,7 @@ const BlogManager = () => {
                 </label>
                 <textarea
                   value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                  onChange={(e) => handleInputChange('content', e.target.value)}
                   required
                   rows={12}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -229,7 +244,7 @@ const BlogManager = () => {
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  ));
 
   if (loading) {
     return (
