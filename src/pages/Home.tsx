@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Star, MapPin, Users, Utensils, Camera, Bed, Sparkles, Mountain } from 'lucide-react';
 import AnimatedSectionWrapper from '../components/AnimatedSectionWrapper';
+import GoogleMap from '../components/GoogleMap';
 
 const Home = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -380,7 +381,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Location Section */}
+      {/* Location Section with Google Maps */}
       <section className="py-20 bg-gradient-to-br from-emerald-50 to-teal-50 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSectionWrapper direction="up" className="text-center mb-16">
@@ -393,55 +394,7 @@ const Home = () => {
             </div>
           </AnimatedSectionWrapper>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.02 }}
-            className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20"
-          >
-            <div className="h-96 bg-gradient-to-br from-emerald-400 via-teal-500 to-blue-600 flex items-center justify-center relative overflow-hidden">
-              {/* Animated Map Placeholder */}
-              <motion.div
-                animate={{
-                  scale: [1, 1.1, 1],
-                  rotate: [0, 5, -5, 0],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="text-white text-center relative z-10"
-              >
-                <MapPin className="h-20 w-20 mx-auto mb-6" />
-                <h3 className="text-3xl font-bold mb-3">Interactive Map</h3>
-                <p className="text-xl opacity-90">Discover our magical location</p>
-                <p className="text-sm mt-3 opacity-75">Kalsubai Peak, Akole, Ahmednagar, Maharashtra 422601</p>
-              </motion.div>
-
-              {/* Floating Elements */}
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-4 h-4 bg-white/20 rounded-full"
-                  style={{
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 100}%`,
-                  }}
-                  animate={{
-                    y: [0, -50, 0],
-                    opacity: [0.2, 0.8, 0.2],
-                  }}
-                  transition={{
-                    duration: 4 + Math.random() * 2,
-                    repeat: Infinity,
-                    delay: Math.random() * 2,
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
+          <GoogleMap />
         </div>
       </section>
     </motion.div>

@@ -1,31 +1,38 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, Eye, EyeOff, Mountain } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, Mountain, AlertCircle } from 'lucide-react';
+import { authApi, LoginRequest } from '../../utils/authApi';
 
 const AdminLogin = () => {
-  const [credentials, setCredentials] = useState({
+  const [credentials, setCredentials] = useState<LoginRequest>({
     username: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // Simulate API call
-    setTimeout(() => {
-      if (credentials.username === 'admin' && credentials.password === 'admin123') {
+    try {
+      const response = await authApi.login(credentials);
+      
+      if (response.success) {
         localStorage.setItem('isAdminLoggedIn', 'true');
         navigate('/admin/dashboard');
       } else {
-        alert('Invalid credentials. Use username: admin, password: admin123');
+        setError(response.message || 'Login failed');
       }
+    } catch (error: any) {
+      setError(error.message || 'Network error. Please try again.');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +40,13 @@ const AdminLogin = () => {
       ...credentials,
       [e.target.name]: e.target.value
     });
+    // Clear error when user starts typing
+    if (error) setError('');
+  };
+
+  const handleForgotPassword = () => {
+    // Navigate to forgot password page or show modal
+    alert('Please contact the system administrator for password reset.');
   };
 
   return (
@@ -59,6 +73,18 @@ const AdminLogin = () => {
           <p className="text-gray-600">Hotel Kalsubai Gate Point</p>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center space-x-2"
+          >
+            <AlertCircle className="h-5 w-5 text-red-500" />
+            <span className="text-red-700 text-sm">{error}</span>
+          </motion.div>
+        )}
+
         {/* Demo Credentials */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <h3 className="text-sm font-semibold text-blue-800 mb-1">Demo Credentials:</h3>
@@ -79,7 +105,8 @@ const AdminLogin = () => {
               value={credentials.username}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              disabled={isLoading}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:bg-gray-100"
               placeholder="Enter your username"
             />
           </div>
@@ -96,13 +123,15 @@ const AdminLogin = () => {
                 value={credentials.password}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent pr-10"
+                disabled={isLoading}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent pr-10 disabled:bg-gray-100"
                 placeholder="Enter your password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                disabled={isLoading}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -112,8 +141,8 @@ const AdminLogin = () => {
           <motion.button
             type="submit"
             disabled={isLoading}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: isLoading ? 1 : 1.02 }}
+            whileTap={{ scale: isLoading ? 1 : 0.98 }}
             className="w-full bg-amber-600 text-white py-3 rounded-lg font-semibold hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
@@ -127,11 +156,23 @@ const AdminLogin = () => {
           </motion.button>
         </form>
 
+        {/* Forgot Password */}
+        <div className="text-center mt-4">
+          <button
+            onClick={handleForgotPassword}
+            disabled={isLoading}
+            className="text-amber-600 hover:text-amber-700 text-sm font-medium disabled:cursor-not-allowed"
+          >
+            Forgot Password?
+          </button>
+        </div>
+
         {/* Back to Home */}
         <div className="text-center mt-6">
           <button
             onClick={() => navigate('/')}
-            className="text-amber-600 hover:text-amber-700 text-sm font-medium"
+            disabled={isLoading}
+            className="text-amber-600 hover:text-amber-700 text-sm font-medium disabled:cursor-not-allowed"
           >
             ← Back to Home
           </button>

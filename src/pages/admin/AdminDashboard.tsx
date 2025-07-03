@@ -13,26 +13,61 @@ import {
   Lock,
   Crown,
   X,
-  FileText
+  FileText,
+  AlertCircle
 } from 'lucide-react';
 import BlogManager from '../../components/admin/BlogManager';
 import MenuManager from '../../components/admin/MenuManager';
+import { authApi } from '../../utils/authApi';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showProModal, setShowProModal] = useState(false);
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
-    if (!isLoggedIn) {
-      navigate('/admin/login');
-    }
+    const checkAuth = async () => {
+      const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
+      if (!isLoggedIn || !authApi.isAuthenticated()) {
+        navigate('/admin/login');
+        return;
+      }
+
+      try {
+        const response = await authApi.getDashboard();
+        if (response.success) {
+          setDashboardData(response.data);
+        } else {
+          setError(response.message || 'Failed to load dashboard');
+        }
+      } catch (error: any) {
+        setError(error.message || 'Failed to connect to server');
+        if (error.message === 'Authentication expired') {
+          navigate('/admin/login');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('isAdminLoggedIn');
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force logout even if API call fails
+      localStorage.removeItem('isAdminLoggedIn');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('adminUser');
+      navigate('/');
+    }
   };
 
   const ProModal = () => (
@@ -121,16 +156,56 @@ const AdminDashboard = () => {
   ];
 
   const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex items-center space-x-3">
+          <AlertCircle className="h-6 w-6 text-red-500" />
+          <div>
+            <h3 className="text-red-800 font-semibold">Error Loading Dashboard</h3>
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case 'overview':
         return (
           <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { title: 'Total Bookings', value: '127', icon: Bed, color: 'from-blue-500 to-blue-600' },
-                { title: 'Menu Items', value: '45', icon: Utensils, color: 'from-green-500 to-green-600' },
-                { title: 'Gallery Images', value: '89', icon: Camera, color: 'from-purple-500 to-purple-600' },
-                { title: 'Blog Posts', value: '12', icon: FileText, color: 'from-amber-500 to-amber-600' }
+                { 
+                  title: 'Total Bookings', 
+                  value: dashboardData?.totalBookings || '0', 
+                  icon: Bed, 
+                  color: 'from-blue-500 to-blue-600' 
+                },
+                { 
+                  title: 'Menu Items', 
+                  value: dashboardData?.totalMenuItems || '0', 
+                  icon: Utensils, 
+                  color: 'from-green-500 to-green-600' 
+                },
+                { 
+                  title: 'Gallery Images', 
+                  value: dashboardData?.totalGalleryImages || '0', 
+                  icon: Camera, 
+                  color: 'from-purple-500 to-purple-600' 
+                },
+                { 
+                  title: 'Blog Posts', 
+                  value: dashboardData?.totalBlogPosts || '0', 
+                  icon: FileText, 
+                  color: 'from-amber-500 to-amber-600' 
+                }
               ].map((stat, index) => (
                 <motion.div
                   key={index}
@@ -157,11 +232,31 @@ const AdminDashboard = () => {
               ))}
             </div>
 
+            {/* Welcome Message */}
+            {dashboardData?.welcomeMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border border-amber-200"
+              >
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                  Welcome back, {dashboardData.adminName}!
+                </h3>
+                <p className="text-gray-600 mb-4">{dashboardData.welcomeMessage}</p>
+                {dashboardData.lastLogin && (
+                  <p className="text-sm text-gray-500">
+                    Last login: {new Date(dashboardData.lastLogin).toLocaleString()}
+                  </p>
+                )}
+              </motion.div>
+            )}
+
             {/* Quick Actions */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.6 }}
               className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border border-amber-200"
             >
               <h3 className="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h3>
