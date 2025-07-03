@@ -40,17 +40,45 @@ class AuthAPI {
     };
   }
 
+  private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
+    if (!response.ok) {
+      if (response.status === 0) {
+        throw new Error('Unable to connect to server. Please ensure the backend is running on http://localhost:8080');
+      }
+      
+      let errorMessage = `Server error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        // If we can't parse the error response, use the default message
+      }
+      
+      throw new Error(errorMessage);
+    }
+
+    try {
+      return await response.json();
+    } catch (error) {
+      throw new Error('Invalid response from server');
+    }
+  }
+
   async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     try {
+      console.log('Attempting login to:', `${API_BASE_URL}/auth/login`);
+      
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(credentials),
+        // Add timeout and other fetch options for better error handling
+        signal: AbortSignal.timeout(10000), // 10 second timeout
       });
 
-      const data = await response.json();
+      const data = await this.handleResponse<LoginResponse>(response);
       
       if (data.success && data.data?.token) {
         localStorage.setItem('authToken', data.data.token);
@@ -58,9 +86,19 @@ class AuthAPI {
       }
 
       return data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      throw new Error('Network error during login');
+      
+      // Provide more specific error messages
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to server. Please ensure the backend is running on http://localhost:8080');
+      }
+      
+      if (error.name === 'TimeoutError') {
+        throw new Error('Request timed out. Please check your connection and try again.');
+      }
+      
+      throw error;
     }
   }
 
@@ -69,6 +107,7 @@ class AuthAPI {
       await fetch(`${API_BASE_URL}/auth/logout`, {
         method: 'POST',
         headers: this.getAuthHeaders(),
+        signal: AbortSignal.timeout(5000),
       });
     } catch (error) {
       console.error('Logout error:', error);
@@ -87,12 +126,18 @@ class AuthAPI {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(request),
+        signal: AbortSignal.timeout(10000),
       });
 
-      return await response.json();
-    } catch (error) {
+      return await this.handleResponse<string>(response);
+    } catch (error: any) {
       console.error('Forgot password error:', error);
-      throw new Error('Network error during password reset request');
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to server. Please ensure the backend is running.');
+      }
+      
+      throw error;
     }
   }
 
@@ -104,12 +149,18 @@ class AuthAPI {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(request),
+        signal: AbortSignal.timeout(10000),
       });
 
-      return await response.json();
-    } catch (error) {
+      return await this.handleResponse<string>(response);
+    } catch (error: any) {
       console.error('Reset password error:', error);
-      throw new Error('Network error during password reset');
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to server. Please ensure the backend is running.');
+      }
+      
+      throw error;
     }
   }
 
@@ -120,12 +171,18 @@ class AuthAPI {
         headers: {
           'Content-Type': 'application/json',
         },
+        signal: AbortSignal.timeout(10000),
       });
 
-      return await response.json();
-    } catch (error) {
+      return await this.handleResponse<boolean>(response);
+    } catch (error: any) {
       console.error('Token validation error:', error);
-      throw new Error('Network error during token validation');
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to server. Please ensure the backend is running.');
+      }
+      
+      throw error;
     }
   }
 
@@ -134,6 +191,7 @@ class AuthAPI {
       const response = await fetch(`${API_BASE_URL}/admin/dashboard`, {
         method: 'GET',
         headers: this.getAuthHeaders(),
+        signal: AbortSignal.timeout(10000),
       });
 
       if (response.status === 401) {
@@ -141,9 +199,14 @@ class AuthAPI {
         throw new Error('Authentication expired');
       }
 
-      return await response.json();
-    } catch (error) {
+      return await this.handleResponse<any>(response);
+    } catch (error: any) {
       console.error('Dashboard error:', error);
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to server. Please ensure the backend is running.');
+      }
+      
       throw error;
     }
   }
@@ -153,6 +216,7 @@ class AuthAPI {
       const response = await fetch(`${API_BASE_URL}/admin/profile`, {
         method: 'GET',
         headers: this.getAuthHeaders(),
+        signal: AbortSignal.timeout(10000),
       });
 
       if (response.status === 401) {
@@ -160,9 +224,14 @@ class AuthAPI {
         throw new Error('Authentication expired');
       }
 
-      return await response.json();
-    } catch (error) {
+      return await this.handleResponse<any>(response);
+    } catch (error: any) {
       console.error('Profile error:', error);
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to server. Please ensure the backend is running.');
+      }
+      
       throw error;
     }
   }
@@ -175,6 +244,19 @@ class AuthAPI {
   getStoredUser(): LoginResponse | null {
     const userStr = localStorage.getItem('adminUser');
     return userStr ? JSON.parse(userStr) : null;
+  }
+
+  // Method to check if backend is accessible
+  async checkBackendHealth(): Promise<boolean> {
+    try {
+      const response = await fetch(`${API_BASE_URL.replace('/api', '')}/actuator/health`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(5000),
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
   }
 }
 
