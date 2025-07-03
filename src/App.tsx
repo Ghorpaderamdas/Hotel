@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { ModalProvider } from './components/ModalProvider';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
@@ -19,30 +18,28 @@ import Footer from './components/Footer';
 
 function App() {
   return (
-    <ModalProvider>
-      <Router>
-        <div className="min-h-screen bg-amber-50">
-          <Navbar />
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/menu" element={<Menu />} />
-              <Route path="/gallery" element={<Gallery />} />
-              <Route path="/facilities" element={<Facilities />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:id" element={<BlogPost />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            </Routes>
-          </AnimatePresence>
-          <WhatsAppFloat />
-          <CampBuddyButton />
-          <SocialMediaIcons />
-          <Footer />
-        </div>
-      </Router>
-    </ModalProvider>
+    <Router>
+      <div className="min-h-screen bg-amber-50">
+        <Navbar />
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/facilities" element={<Facilities />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          </Routes>
+        </AnimatePresence>
+        <WhatsAppFloat />
+        <CampBuddyButton />
+        <SocialMediaIcons />
+        <Footer />
+      </div>
+    </Router>
   );
 }
 

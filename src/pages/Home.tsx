@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Star, MapPin, Users, Utensils, Camera, Bed, Sparkles, Mountain } from 'lucide-react';
 import AnimatedSectionWrapper from '../components/AnimatedSectionWrapper';
-import QuickActionButtons from '../components/QuickActionButtons';
 
 const Home = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -71,9 +70,6 @@ const Home = () => {
           ease: "easeInOut"
         }}
       />
-
-      {/* Quick Action Buttons */}
-      <QuickActionButtons />
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden">
