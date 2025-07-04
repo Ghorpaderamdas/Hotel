@@ -246,14 +246,32 @@ class AuthAPI {
     return userStr ? JSON.parse(userStr) : null;
   }
 
-  // Method to check if backend is accessible
+  // Method to check if backend is accessible - Fixed health check endpoint
   async checkBackendHealth(): Promise<boolean> {
     try {
-      const response = await fetch(`${API_BASE_URL.replace('/api', '')}/actuator/health`, {
-        method: 'GET',
-        signal: AbortSignal.timeout(5000),
-      });
-      return response.ok;
+      // Try multiple endpoints to check if backend is running
+      const endpoints = [
+        `${API_BASE_URL}/auth/login`, // Try the login endpoint with OPTIONS
+        `http://localhost:8080/api/auth/login`, // Direct URL
+        `http://localhost:8080` // Root endpoint
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: 'OPTIONS', // Use OPTIONS to avoid CORS issues
+            signal: AbortSignal.timeout(3000),
+          });
+          if (response.status < 500) { // Any response except server error means backend is running
+            return true;
+          }
+        } catch (error) {
+          // Try next endpoint
+          continue;
+        }
+      }
+      
+      return false;
     } catch {
       return false;
     }
