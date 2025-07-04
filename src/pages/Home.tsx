@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Star, MapPin, Users, Utensils, Camera, Bed, Sparkles, Mountain } from 'lucide-react';
 import AnimatedSectionWrapper from '../components/AnimatedSectionWrapper';
 import GoogleMap from '../components/GoogleMap';
+import MountainHero from '../components/MountainHero';
 
 const Home = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -72,149 +73,8 @@ const Home = () => {
         }}
       />
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0">
-          {[...Array(50)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 bg-white/20 rounded-full"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [0, -100, 0],
-                opacity: [0, 1, 0],
-                scale: [0, 1, 0],
-              }}
-              transition={{
-                duration: 4 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Parallax Mountains */}
-        <motion.div
-          style={{ y: y1 }}
-          className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/30 to-transparent"
-        />
-        <motion.div
-          style={{ y: y2 }}
-          className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/50 to-transparent"
-        />
-
-        <div className="text-center z-10 px-4 relative">
-          <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 1, type: "spring", stiffness: 100 }}
-            className="mb-8"
-          >
-            <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto shadow-2xl">
-              <Mountain className="h-12 w-12 text-white" />
-            </div>
-          </motion.div>
-
-          <motion.h1
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
-            className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight"
-          >
-            <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              Hotel Kalsubai
-            </span>
-            <br />
-            <span className="text-white/90">Gate Point</span>
-          </motion.h1>
-
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mb-8"
-          >
-            <p className="text-xl md:text-3xl text-white/80 mb-4">
-              Your Gateway to Maharashtra's Highest Peak
-            </p>
-            <div className="flex items-center justify-center space-x-2 text-amber-300">
-              <Sparkles className="h-6 w-6" />
-              <span className="text-lg">Where Adventure Meets Magic</span>
-              <Sparkles className="h-6 w-6" />
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.9, type: "spring", stiffness: 200 }}
-            className="flex flex-col sm:flex-row gap-6 justify-center"
-          >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                to="/menu"
-                className="group relative bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-amber-600 hover:to-orange-700 transition-all shadow-2xl overflow-hidden"
-              >
-                <span className="relative z-10">Explore Menu</span>
-                <motion.div
-                  className="absolute inset-0 bg-white/20"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: '100%' }}
-                  transition={{ duration: 0.6 }}
-                />
-              </Link>
-            </motion.div>
-
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                to="/contact"
-                className="group relative bg-white/10 backdrop-blur-xl text-white px-8 py-4 rounded-2xl font-bold text-lg border-2 border-white/30 hover:bg-white/20 transition-all shadow-2xl overflow-hidden"
-              >
-                <span className="relative z-10">Book Your Stay</span>
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
-                  initial={{ scale: 0 }}
-                  whileHover={{ scale: 1 }}
-                  transition={{ duration: 0.4 }}
-                />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Floating Elements */}
-        <motion.div
-          animate={{
-            y: [0, -20, 0],
-            rotate: [0, 5, -5, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-20 left-10 w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-20"
-        />
-        <motion.div
-          animate={{
-            y: [0, 30, 0],
-            rotate: [0, -5, 5, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-          className="absolute bottom-32 right-16 w-12 h-12 bg-gradient-to-br from-pink-400 to-red-500 rounded-full opacity-20"
-        />
-      </section>
+      {/* New Mountain Hero Section */}
+      <MountainHero />
 
       {/* About Section */}
       <section className="py-20 bg-gradient-to-br from-amber-50 to-orange-50 relative overflow-hidden">
